@@ -12,7 +12,7 @@
 #include <rabbitmq-c/amqp.h>
 #include <rabbitmq-c/tcp_socket.h>
 
-#define PATH_TO_ENV_FILE "/home/pino/AIoT_ws/cloud-based/.env"
+#define PATH_TO_ENV_FILE "/home/pino/AIoT_ws/cloud-based_project/.env"
 
 enum EXIT_CODE : int8_t
 {

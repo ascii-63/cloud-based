@@ -2,11 +2,11 @@ import pika
 import time
 
 # Define the AMQP server connection parameters, including login credentials
-credentials = pika.PlainCredentials('slbnkadk', 'yjICj6LodkqaxgCG2rDIjvqJQ5Ihoo_u')
+credentials = pika.PlainCredentials('guest', 'guest')
 connection_parameters = pika.ConnectionParameters(
-    host='gerbil.rmq.cloudamqp.com',
+    host='localhost',
     port=5672,
-    virtual_host='slbnkadk',
+    virtual_host='/',
     credentials=credentials
 )
 
@@ -33,7 +33,7 @@ for i in range(100):  # Adjust the number of messages as needed
 
     print(f"Sent message: {message_body}")
 
-    time.sleep(1)  # Delay for 2 seconds between messages
+    time.sleep(1)  # Delay between messages
 
 # Close the connection
 connection.close()
