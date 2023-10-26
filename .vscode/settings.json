@@ -57,5 +57,9 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "bit": "cpp"
-    }
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
 }
