@@ -4,7 +4,8 @@ AMQP_Connection local_client;
 
 void setup()
 {
-    std::string path = "/home/pino/AIoT_ws/cloud-based/test/.env";
+    std::string path = std::string(get_current_dir_name());
+    path = path + "/../test/.env";
     local_client.parser(path);
 
     std::cout << local_client.amqp_url << std::endl

@@ -20,7 +20,7 @@ bool localConsumerSetup()
     int8_t connect_result = local_consumer.connect();
     if (connect_result != EXIT_CODE::EXIT_OK)
     {
-        std::cerr << "Failed to setup local customner." << std::endl;
+        std::cerr << "Failed to setup local consumer." << std::endl;
         return false;
     }
 

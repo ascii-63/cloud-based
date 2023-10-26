@@ -165,6 +165,49 @@ std::string AMQP_Connection::receive()
     amqp_destroy_envelope(&envelope);
 
     return message;
+
+    /***********************************/
+
+    // amqp_frame_t frame;
+    // int result = amqp_simple_wait_frame(conn, &frame);
+
+    // if (result < 0)
+    // {
+    //     // Handle frame wait error
+    // }
+
+    // if (frame.frame_type != AMQP_FRAME_METHOD)
+    // {
+    //     return "";
+    // }
+
+    // if (frame.payload.method.id == AMQP_BASIC_DELIVER_METHOD)
+    // {
+    //     amqp_basic_deliver_t *delivery = (amqp_basic_deliver_t *)frame.payload.method.decoded;
+    //     amqp_basic_get(conn, 1, amqp_cstring_bytes(queue_name_str.c_str()), 1);
+    //     amqp_frame_t message_frame;
+    //     amqp_basic_get_ok_t *get_ok;
+    //     result = amqp_simple_wait_frame(conn, &message_frame);
+
+    //     if (result < 0)
+    //     {
+    //         // Handle message receive error
+    //     }
+
+    //     if (message_frame.frame_type != AMQP_FRAME_METHOD)
+    //     {
+    //         return "";
+    //     }
+
+    //     if (message_frame.payload.method.id == AMQP_BASIC_GET_OK_METHOD)
+    //     {
+    //         get_ok = (amqp_basic_get_ok_t *)message_frame.payload.method.decoded;
+    //         // Process the message here
+            
+    //     }
+
+    //     // amqp_destroy_envelope(&envelope);
+    // }
 }
 
 void AMQP_Connection::close()

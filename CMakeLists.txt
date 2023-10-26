@@ -47,3 +47,11 @@ target_link_libraries(
     rabbitmq
     amqp_lib
 )
+
+add_executable(event_storage event_storage.cpp)
+target_link_libraries(
+    event_storage
+    rabbitmq
+    amqp_lib
+    db_lib
+)
