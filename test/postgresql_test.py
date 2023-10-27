@@ -1,5 +1,15 @@
 import psycopg2
 
+
+class Person:
+    name = ""
+    age = 0
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+
 # Database connection parameters
 db_params = {
     'dbname': 'postgres',
@@ -9,11 +19,15 @@ db_params = {
     'port': '5432'
 }
 
+John = Person('John', 30)
+Alice = Person('Alice', 25)
+Bob = Person('Bob', 35)
+
 # Sample data to insert
 data_to_insert = [
-    ('John', 30),
-    ('Alice', 25),
-    ('Bob', 35)
+    (John.name, John.age),
+    (Alice.name, Alice.age),
+    (Bob.name, Bob.age)
 ]
 
 try:
