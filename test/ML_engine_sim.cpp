@@ -34,17 +34,19 @@ int main(int argc, const char *argv[])
     if (local_client.send(message))
         std::cout << "[x] Sended: " << message << std::endl;
 
-    // int counter = 0;
-    // for (;;)
-    // {
-    //     std::string message;
-    //     message = "Message #" + std::to_string(counter);
-    //     if (local_client.send(message))
-    //         std::cout << "Sended: " << message << std::endl;
+    int counter = 0;
+    for (;;)
+    {
+        std::string message;
+        message = "Message #" + std::to_string(counter);
+        if (local_client.send(message))
+            std::cout << "[x] Sended: " << message << std::endl;
 
-    //     message.clear();
-    //     counter++;
-    // }
+        message.clear();
+        counter++;
+
+        sleep(1);
+    }
 
     return 0;
 }

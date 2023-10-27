@@ -19,7 +19,7 @@
 // #define THIS_USERNAME "guest"
 // #define THIS_PASSWORD "guest"
 #define THIS_AMQP_PORT AMQP_PROTOCOL_PORT
-#define QUEUE_NAME "hello"
+#define QUEUE_NAME "test"
 
 const char *amqp_url = THIS_AMQP_URL;
 const char *amqp_hostname = THIS_HOSTNAME;
@@ -27,6 +27,7 @@ const char *amqp_queue_name = QUEUE_NAME;
 
 const amqp_channel_t k_channel = 1;
 int counter = 1; // For package_lost rate testing
+const int max_counter = 100;
 
 enum EXIT_CODE
 {
@@ -38,9 +39,8 @@ enum EXIT_CODE
 
 std::string messageMaker()
 {
+
     std::string message = "Message #" + std::to_string(counter);
-    ++counter;
-    std::cout << message << std::endl;
     return message;
 }
 
@@ -67,23 +67,6 @@ int main()
     if (login_reply.reply_type != AMQP_RESPONSE_NORMAL)
     {
         std::cerr << "Failed to login to AMQPCloud: " << login_reply.reply_type << std::endl;
-
-        ///* Debug path */
-        // if (login_reply.reply.id == AMQP_CHANNEL_CLOSE_METHOD)
-        //     std::cerr << "AMQP_CHANNEL_CLOSE_METHOD" << std::endl;
-        // else if (login_reply.reply.id == AMQP_CONNECTION_CLOSE_METHOD)
-        // {
-        //     std::cerr << "AMQP_CONNECTION_CLOSE_METHOD" << std::endl;
-        //     amqp_connection_close_t *temp = (amqp_connection_close_t *)(login_reply.reply.decoded);
-
-        //     int size = temp->reply_text.len;
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         std::cout << (char)(temp->reply_text.len);
-        //     }
-        //     std::cout << std::endl;
-        // }
-
         return EXIT_CODE::LOGIN_ERROR;
     }
 
@@ -99,18 +82,20 @@ int main()
 
     amqp_bytes_t queue_name(amqp_cstring_bytes(amqp_queue_name));
     amqp_queue_declare(conn, k_channel, queue_name, false, false, false, false, amqp_empty_table);
-    amqp_basic_consume(conn, k_channel, queue_name, amqp_empty_bytes, false, true, false, amqp_empty_table);
+    // amqp_basic_consume(conn, k_channel, queue_name, amqp_empty_bytes, false, true, false, amqp_empty_table);
 
     /**************************************/
 
-    int counter = 1;
-    for (;;)
+    while (counter <= max_counter)
     {
         const char *message = messageMaker().c_str();
-        amqp_basic_publish(conn, k_channel, amqp_empty_bytes, queue_name, false, false, nullptr, amqp_cstring_bytes(message));
+        int result = amqp_basic_publish(conn, k_channel, amqp_empty_bytes, queue_name, false, false, nullptr, amqp_cstring_bytes(message));
+        if (result == AMQP_STATUS_OK)
+            std::cout << "Sended: #" << counter << std::endl;
 
-        // std::chrono::seconds pause_time(1);
-        // std::this_thread::sleep_for(pause_time);
+        std::chrono::seconds pause_time(1);
+        std::this_thread::sleep_for(pause_time);
+        counter++;
     }
 
     /**************************************/
@@ -118,4 +103,6 @@ int main()
     amqp_channel_close(conn, k_channel, AMQP_REPLY_SUCCESS);
     amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
     amqp_destroy_connection(conn);
+
+    return 0;
 }

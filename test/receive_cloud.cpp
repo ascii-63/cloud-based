@@ -7,26 +7,26 @@
 #include <rabbitmq-c/amqp.h>
 #include <rabbitmq-c/tcp_socket.h>
 
-// #define THIS_AMQP_URL "amqps://slbnkadk:yjICj6LodkqaxgCG2rDIjvqJQ5Ihoo_u@gerbil.rmq.cloudamqp.com/slbnkadk"
-// #define THIS_HOSTNAME "gerbil.rmq.cloudamqp.com"
-// #define THIS_USERNAME "slbnkadk"
-// #define THIS_PASSWORD "yjICj6LodkqaxgCG2rDIjvqJQ5Ihoo_u"
-// #define THIS_VHOST "slbnkadk"
+#define THIS_AMQP_URL "amqps://slbnkadk:yjICj6LodkqaxgCG2rDIjvqJQ5Ihoo_u@gerbil.rmq.cloudamqp.com/slbnkadk"
+#define THIS_HOSTNAME "gerbil.rmq.cloudamqp.com"
+#define THIS_USERNAME "slbnkadk"
+#define THIS_PASSWORD "yjICj6LodkqaxgCG2rDIjvqJQ5Ihoo_u"
+#define THIS_VHOST "slbnkadk"
 
-#define THIS_AMQP_URL "amqp://guest:guest@localhost/guest"
-#define THIS_HOSTNAME "localhost"
-#define THIS_USERNAME "guest"
-#define THIS_PASSWORD "guest"
-#define THIS_VHOST "/"
+// #define THIS_AMQP_URL "amqp://guest:guest@localhost/guest"
+// #define THIS_HOSTNAME "localhost"
+// #define THIS_USERNAME "guest"
+// #define THIS_PASSWORD "guest"
+// #define THIS_VHOST "/"
 
 #define THIS_AMQP_PORT AMQP_PROTOCOL_PORT
-#define QUEUE_NAME "default"
+#define QUEUE_NAME "test"
 
 const char *amqp_url = THIS_AMQP_URL;
 const char *amqp_hostname = THIS_HOSTNAME;
 const char *amqp_queue_name = QUEUE_NAME;
 
-const amqp_channel_t k_channel = 1;
+const amqp_channel_t k_channel = 2;
 
 enum EXIT_CODE
 {
@@ -66,23 +66,6 @@ int main(int argc, char const *const *argv)
     if (login_reply.reply_type != AMQP_RESPONSE_NORMAL)
     {
         std::cerr << "Failed to login to AMQPCloud: " << login_reply.reply_type << std::endl;
-
-        ///* Debug path */
-        // if (login_reply.reply.id == AMQP_CHANNEL_CLOSE_METHOD)
-        //     std::cerr << "AMQP_CHANNEL_CLOSE_METHOD" << std::endl;
-        // else if (login_reply.reply.id == AMQP_CONNECTION_CLOSE_METHOD)
-        // {
-        //     std::cerr << "AMQP_CONNECTION_CLOSE_METHOD" << std::endl;
-        //     amqp_connection_close_t *temp = (amqp_connection_close_t *)(login_reply.reply.decoded);
-
-        //     int size = temp->reply_text.len;
-        //     for (int i = 0; i < size; i++)
-        //     {
-        //         std::cout << (char)(temp->reply_text.len);
-        //     }
-        //     std::cout << std::endl;
-        // }
-
         return EXIT_CODE::LOGIN_ERROR;
     }
 
@@ -98,7 +81,7 @@ int main(int argc, char const *const *argv)
 
     amqp_bytes_t queue_name(amqp_cstring_bytes(amqp_queue_name));
     amqp_queue_declare(conn, k_channel, queue_name, false, false, false, false, amqp_empty_table);
-    amqp_basic_consume(conn, k_channel, queue_name, amqp_empty_bytes, false, true, false, amqp_empty_table);
+    amqp_basic_consume(conn, k_channel, queue_name, amqp_empty_bytes, false, false, false, amqp_empty_table);
 
     /**************************************/
 
@@ -112,6 +95,9 @@ int main(int argc, char const *const *argv)
         std::string message = std::string((char *)envelope.message.body.bytes, (int)envelope.message.body.len);
 
         messageProcess(message);
+
+        // Manually acknowledge the message
+        amqp_basic_ack(conn, k_channel, envelope.delivery_tag, false);
 
         amqp_destroy_envelope(&envelope);
     }

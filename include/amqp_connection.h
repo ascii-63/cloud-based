@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <unistd.h>
+#include <csignal>
 #include <chrono>
 #include <thread>
 
@@ -26,7 +27,7 @@ enum EXIT_CODE : int8_t
 // From std::string, return a pointer to char array
 char *stringToCharPtr(const std::string _inp_str);
 
-// Get variable in '_key' field from a map<string, string>, return in string 
+// Get variable in '_key' field from a map<string, string>, return in string
 std::string getVariableFromKey(const std::string _key,
                                const std::map<std::string, std::string> _var_map);
 

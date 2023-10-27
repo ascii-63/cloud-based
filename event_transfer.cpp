@@ -1,6 +1,6 @@
 /*
     Receive event logs from RabbitMQ server on localhost,
-    then tranfer it to RabbitMQ server on AMQP-Cloud 
+    then tranfer it to RabbitMQ server on AMQP-Cloud
 */
 
 #include "amqp_connection.h"
@@ -56,13 +56,14 @@ int main()
     for (;;)
     {
         std::string message = local_consumer.receive();
+        std::cout << "Received: " << message << std::endl;
         if (!cloud_provider.send(message))
         {
             std::cerr << "Failed to transfer an event message." << std::endl;
             continue;
         }
-        std::cout << std::endl
-                  << "[x] Sended: " << message << std::endl;
+        std::cout << "[x] Sended: " << message << std::endl
+                  << std::endl;
     }
 
     return 0;

@@ -136,7 +136,6 @@ int8_t AMQP_Connection::connect()
 
     queue_name_amqp = amqp_bytes_t(amqp_cstring_bytes(queue_name_str.c_str()));
     amqp_queue_declare(conn, k_channel, queue_name_amqp, false, false, false, false, amqp_empty_table);
-    amqp_basic_consume(conn, k_channel, queue_name_amqp, amqp_empty_bytes, false, true, false, amqp_empty_table);
 
     /****************************/
 
@@ -158,56 +157,14 @@ bool AMQP_Connection::send(const std::string _message)
 
 std::string AMQP_Connection::receive()
 {
+    amqp_basic_consume(conn, k_channel, queue_name_amqp, amqp_empty_bytes, false,/*no ack*/ false, false, amqp_empty_table);
     amqp_maybe_release_buffers(conn);
     amqp_envelope_t envelope;
     amqp_consume_message(conn, &envelope, nullptr, 0);
     std::string message = std::string((char *)envelope.message.body.bytes, (int)envelope.message.body.len);
     amqp_destroy_envelope(&envelope);
-
+    amqp_basic_ack(conn, k_channel, envelope.delivery_tag, false); /*ack*/
     return message;
-
-    /***********************************/
-
-    // amqp_frame_t frame;
-    // int result = amqp_simple_wait_frame(conn, &frame);
-
-    // if (result < 0)
-    // {
-    //     // Handle frame wait error
-    // }
-
-    // if (frame.frame_type != AMQP_FRAME_METHOD)
-    // {
-    //     return "";
-    // }
-
-    // if (frame.payload.method.id == AMQP_BASIC_DELIVER_METHOD)
-    // {
-    //     amqp_basic_deliver_t *delivery = (amqp_basic_deliver_t *)frame.payload.method.decoded;
-    //     amqp_basic_get(conn, 1, amqp_cstring_bytes(queue_name_str.c_str()), 1);
-    //     amqp_frame_t message_frame;
-    //     amqp_basic_get_ok_t *get_ok;
-    //     result = amqp_simple_wait_frame(conn, &message_frame);
-
-    //     if (result < 0)
-    //     {
-    //         // Handle message receive error
-    //     }
-
-    //     if (message_frame.frame_type != AMQP_FRAME_METHOD)
-    //     {
-    //         return "";
-    //     }
-
-    //     if (message_frame.payload.method.id == AMQP_BASIC_GET_OK_METHOD)
-    //     {
-    //         get_ok = (amqp_basic_get_ok_t *)message_frame.payload.method.decoded;
-    //         // Process the message here
-            
-    //     }
-
-    //     // amqp_destroy_envelope(&envelope);
-    // }
 }
 
 void AMQP_Connection::close()
