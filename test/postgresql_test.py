@@ -1,33 +1,27 @@
 import psycopg2
-
-
-class Person:
-    name = ""
-    age = 0
-
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+from datetime import datetime
 
 
 # Database connection parameters
 db_params = {
-    'dbname': 'postgres',
+    'dbname': 'event_db',
     'user': 'server',
     'password': 'server',
     'host': 'localhost',
     'port': '5432'
 }
+event_table = 'event_table'
 
-John = Person('John', 30)
-Alice = Person('Alice', 25)
-Bob = Person('Bob', 35)
+custom_timestamp = datetime(2023, 10, 30, 17, 20, 0)
 
 # Sample data to insert
 data_to_insert = [
-    (John.name, John.age),
-    (Alice.name, Alice.age),
-    (Bob.name, Bob.age)
+    (custom_timestamp,
+     '{ \"timestamp\": \"100\", \"event\": {\"position\": [192,168,1],\"object\": \"Human\"},\"image_ID\": \"100\"}', './image/100.png'),
+    (custom_timestamp,
+     '{ \"timestamp\": \"101\", \"event\": {\"position\": [192,168,1],\"object\": \"Human\"},\"image_ID\": \"101\"}', './image/101.png'),
+    (custom_timestamp,
+     '{ \"timestamp\": \"102\", \"event\": {\"position\": [192,168,1],\"object\": \"Human\"},\"image_ID\": \"102\"}', './image/102.png'),
 ]
 
 try:
@@ -38,7 +32,8 @@ try:
     cursor = connection.cursor()
 
     # SQL statement to insert data into the table
-    insert_query = "INSERT INTO test_table (name, age) VALUES (%s, %s)"
+    insert_query = "INSERT INTO " + event_table + \
+        " (timestamp, event, image_path) VALUES (%s, %s, %s)"
 
     # Loop through the data and execute the insert query for each record
     for record in data_to_insert:
