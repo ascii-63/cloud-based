@@ -2,6 +2,7 @@ import pika
 import os
 import psycopg2
 from datetime import datetime
+import json
 
 
 env_file_path = '../.env'
@@ -18,8 +19,13 @@ event_table = 'event_table'
 
 # Get the timestamp of the event
 def getTimestampFromEvent(event):
-    timestamp = datetime[0, 0, 0, 0, 0, 0]
-    return timestamp
+    data = json.loads(event)
+    timestamp_str = data.get('@timestamp')
+    if timestamp_str:
+        timestamp = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+        return timestamp
+    else:
+        return None
 
 
 # Get image path go with this event
@@ -78,7 +84,8 @@ def callback(ch, method, properties, body):
     decoded_message = body.decode('utf-8')
     print(f"{decoded_message}")
 
-    insert_db(decoded_message)
+    decoded_message = decoded_message.replace("\n","")
+    # insert_db(decoded_message)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
