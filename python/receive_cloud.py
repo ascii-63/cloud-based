@@ -84,7 +84,7 @@ def callback(ch, method, properties, body):
     decoded_message = body.decode('utf-8')
     print(f"{decoded_message}")
 
-    decoded_message = decoded_message.replace("\n","")
+    decoded_message = decoded_message.replace("\n", "")
     # insert_db(decoded_message)
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -93,7 +93,6 @@ def callback(ch, method, properties, body):
 # Set up the consumer and specify the callback function
 channel.basic_consume(
     queue=queue_name, on_message_callback=callback)
-# queue=queue_name, on_message_callback=callback, auto_ack=True)
 
 # Start consuming messages
 print('Waiting for messages. To exit, press CTRL+C')
