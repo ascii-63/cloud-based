@@ -1,6 +1,5 @@
 {
     "messageid": "7aa7630a-c99b-48f3-b78f-c41b7f73b908",
-    "mdsversion": "1.0",
     "@timestamp": "2023-10-31T07:38:42.491Z",
     "place": {
         "id": "1",
@@ -10,45 +9,20 @@
             "lat": 30.32,
             "lon": -40.55,
             "alt": 100.0
-        },
-        "aisle": {
-            "id": "walsh",
-            "name": "lane1",
-            "level": "P2",
-            "coordinate": {
-                "x": 1.0,
-                "y": 2.0,
-                "z": 3.0
-            }
         }
     },
     "sensor": {
         "id": "CAMERA_ID",
         "type": "Camera",
-        "description": "Entrance of Garage Right Lane",
+        "description": "Camera description",
         "location": {
             "lat": 45.293701446999997,
             "lon": -75.830391449900006,
             "alt": 48.155747933800001
-        },
-        "coordinate": {
-            "x": 5.2,
-            "y": 10.1,
-            "z": 11.2
         }
-    },
-    "analyticsModule": {
-        "id": "XYZ",
-        "description": "Vehicle Detection and License Plate Recognition",
-        "source": "OpenALR",
-        "version": "1.0"
     },
     "object": {
         "id": "18446744073709551615",
-        "speed": 0.0,
-        "direction": 0.0,
-        "orientation": 0.0,
-        "Person": {},
         "bbox": {
             "topleftx": 32,
             "toplefty": 0,
@@ -59,13 +33,7 @@
             "lat": 0.0,
             "lon": 0.0,
             "alt": 0.0
-        },
-        "coordinate": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
-        },
-        "pose": {}
+        }
     },
     "event": {
         "id": "22dbf684-3115-4df5-b22e-1d97d1742b0f",

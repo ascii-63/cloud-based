@@ -1,6 +1,8 @@
-# event.py
+# message.py
 
 from enum import Enum
+from datetime import datetime
+import json
 
 
 class Enum_EventType(Enum):
@@ -100,3 +102,17 @@ class Message:
         self.sensor = _sensor
         self.object = _object
         self.event = _event
+
+##############################################
+
+
+def getTimestampFromMessage(_message):
+    """Get the timestamp of the Message"""
+
+    data = json.loads(_message)
+    timestamp_str = data.get('@timestamp')
+    if timestamp_str:
+        timestamp = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+        return timestamp
+    else:
+        return None
