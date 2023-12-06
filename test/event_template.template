@@ -1,0 +1,44 @@
+{
+    "messageid": string,
+    "@timestamp": datetime,
+    "place": {
+        "id": integer,
+        "name": string,
+        "type": string,
+        "location": {
+            "lat": float32,
+            "lon": float32,
+            "alt": float32
+        }
+    },
+    "sensor": {
+        "id": integer,
+        "type": string,
+        "description": string,
+        "location": {
+            "lat": float32,
+            "lon": float32,
+            "alt": float32
+        }
+    },
+    "object": {
+        "id": string,
+        "bbox": {
+            "topleftx": integer,
+            "toplefty": integer,
+            "bottomrightx": integer,
+            "bottomrighty": integer
+        },
+        "location": {
+            "lat": float32,
+            "lon": float32,
+            "alt": float32
+        }
+    },
+    "event": {
+        "id": string,
+        "type": string
+    },
+    "imageURL": string,
+    "videoURL": string
+}

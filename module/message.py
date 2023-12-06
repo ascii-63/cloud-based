@@ -36,7 +36,7 @@ class Event:
     """
     id: string
 
-    type: @Enum_EventType
+    type: @Enum_EventType (string)
     """
 
     def __init__(self, _id, _type):
@@ -46,9 +46,9 @@ class Event:
 
 class Sensor:
     """
-    id: string
+    id: integer
 
-    type: @Enum_SensorType
+    type: @Enum_SensorType (string)
 
     description: string
 
@@ -64,11 +64,11 @@ class Sensor:
 
 class Place:
     """
-    id: string
+    id: integer
 
     name: string
 
-    type: @Enum_PlaceType
+    type: @Enum_PlaceType (string)
 
     location: {"lat": float, "lon": float, "alt": float}
     """
@@ -95,13 +95,16 @@ class Message:
     event: @Event
     """
 
-    def __init__(self, _message_id, _timestamp, _place, _sensor, _object, _event):
+    def __init__(self, _message_id, _timestamp, _place, _sensor, _object, _event, _imageURL, _videoURL):
         self.message_id = _message_id
         self.timestamp = _timestamp
         self.place = _place
         self.sensor = _sensor
         self.object = _object
         self.event = _event
+        self.imageURL = _imageURL
+        self.videoURL = _videoURL
+
 
 ##############################################
 
