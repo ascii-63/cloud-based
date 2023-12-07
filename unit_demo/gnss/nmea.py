@@ -1,50 +1,42 @@
 import serial
 import pynmea2
 
+import sys
 
-def process_nmea_message(message):
-    try:
+def getLatLonFromNMEAMessage(_message):
+    """Get Latitude and Longitude from NMEA2 message"""
+    try: 
         # Parse the NMEA sentence
-        nmea_object = pynmea2.parse(message)
+        nmea_object = pynmea2.parse(_message)
 
-        # Print message information
         if isinstance(nmea_object, pynmea2.GGA):
-            print(
-                f'Catch GGA message:\n \tLatitude: {nmea_object.latitude}, Longitude: {nmea_object.longitude}')
-
-        elif isinstance(nmea_object, pynmea2.RMC):
-            print(
-                f'Catch RMC message:')
-
-        elif isinstance(nmea_object, pynmea2.GSA):
-            print(
-                f'Catch GSA message:')
-
-        elif isinstance(nmea_object, pynmea2.GSV):
-            print(
-                f'Catch GSV message:'
-            )
-        elif isinstance(nmea_object, pynmea2.GLL):
-            print(
-                f'Catch GLL message:'
-            )
-
+            lat = nmea_object.latitude
+            lon = nmea_object.longitude
+            return lat, lon
     except pynmea2.ParseError as e:
-        # print(f'Error parsing NMEA sentence: {e}')
-        pass
+        return 0, 0
+    
+    return 0, 0
 
 
 if __name__ == "__main__":
     port_name = '/dev/ttyACM0'
     baud_rate = 9600
 
+    if (len(sys.argv) == 3):
+        port_name = sys.argv[1]
+        baud_rate = sys.argv[2]
+        print(f'Get port name ({port_name}) and baud rate ({baud_rate}) from arguments.')
+    
     ser = serial.Serial(port_name, baudrate=baud_rate, timeout=1)
 
     try:
         while True:
-            # data = ser.readline().decode('utf-8')
             data = ser.readline().decode('utf-8', errors='replace')
             # print(data, end='')  # Print the raw NMEA sentence
-            process_nmea_message(data)
+
+            lat, lon = getLatLonFromNMEAMessage(data)
+            if (lat != 0 and lon != 0):
+                print(f'Lat: {lat}, Lon: {lon}')
     except KeyboardInterrupt:
         ser.close()
