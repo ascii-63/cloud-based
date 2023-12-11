@@ -114,8 +114,4 @@ def getTimestampFromMessage(_message):
 
     data = json.loads(_message)
     timestamp_str = data.get('@timestamp')
-    if timestamp_str:
-        timestamp = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-        return timestamp
-    else:
-        return None
+    return timestamp_str

@@ -5,6 +5,7 @@ import os
 import pika
 import json
 from datetime import datetime
+import time
 
 from module import rabbitmq
 from module import message
@@ -13,14 +14,7 @@ from module import database
 IMAGE_EXTENTION = '.jpg'
 VIDEO_EXTENTION = '.mp4'
 
-ENV_FILE_PATH = '../.env'
-
-LOCAL_IMAGE_DIR = '../resources/images'      # Local path to detected images
-LOCAL_VIDEO_DIR = '../resources/videos'      # Local path to detected videos
-# Detected images directory in bucket
-CLOUD_IMAGE_DIR = 'images'
-# Detected videos directory in bucket
-CLOUD_VIDEO_DIR = 'videos'
+ENV_FILE_PATH = '.env'
 
 
 def envFileParser():
@@ -32,12 +26,24 @@ def envFileParser():
                 key, value = line.strip().split("=", 1)
                 os.environ[key] = value
 
+    #############################
+
     global remote_amqp_url
     remote_amqp_url = os.environ.get('AMQP_URL')
     global remote_queue_name
     remote_queue_name = os.environ.get('QUEUE')
     global bucket_name
     bucket_name = os.environ.get('BUCKET')
+    global local_image_dir
+    local_image_dir = os.environ.get('LOCAL_IMAGE_DIR')
+    global local_video_dir
+    local_video_dir = os.environ.get('LOCAL_VIDEO_DIR')
+    global cloud_image_dir
+    cloud_image_dir = os.environ.get('CLOUD_IMAGE_DIR')
+    global cloud_video_dir
+    cloud_video_dir = os.environ.get('CLOUD_VIDEO_DIR')
+
+    #############################
 
     if (remote_amqp_url == '' or remote_queue_name == '' or bucket_name == ''):
         return False
@@ -67,22 +73,28 @@ def sendMessage(message):
 
 def sendImageAndVideo(_message):
     """Send image and video match with timestamp in message"""
+    
+    time.sleep(2)
 
     timestamp = message.getTimestampFromMessage(_message)
     if (timestamp != None):
         image_name = timestamp + IMAGE_EXTENTION
         video_name = timestamp + VIDEO_EXTENTION
+        print(f"Image name: {image_name}")
+        print(f"Dir: {local_image_dir}")
 
-        if database.searchFileInDirectory(image_name, LOCAL_IMAGE_DIR):
-            image_path = os.getcwd() + '/' + LOCAL_IMAGE_DIR + '/' + image_name
-            if not rabbitmq.singleBlobUpload(bucket_name, image_path):
+        if database.searchFileInDirectory(local_image_dir, image_name):
+            image_path = local_image_dir + '/' + image_name
+            destination_blob_img = cloud_image_dir + '/' + image_name
+            if not rabbitmq.singleBlobUpload(bucket_name, image_path, destination_blob_img):
                 return False
         else:
             print(f"The image: {image_name} is not found.")
 
-        if database.searchFileInDirectory(video_name, LOCAL_VIDEO_DIR):
-            video_path = os.getcwd() + '/' + LOCAL_VIDEO_DIR + '/' + video_name
-            if not rabbitmq.singleBlobUpload(bucket_name, video_path):
+        if database.searchFileInDirectory(local_image_dir, video_name):
+            video_path = local_video_dir + '/' + video_name
+            destination_blob_vid = cloud_video_dir + '/' + video_name
+            if not rabbitmq.singleBlobUpload(bucket_name, video_path, destination_blob_vid):
                 return False
         else:
             print(f"The video: {video_name} is not found.")

@@ -28,17 +28,10 @@
             "toplefty": integer,
             "bottomrightx": integer,
             "bottomrighty": integer
-        },
-        "location": {
-            "lat": float32,
-            "lon": float32,
-            "alt": float32
         }
     },
     "event": {
         "id": string,
         "type": string
-    },
-    "imageURL": string,
-    "videoURL": string
+    }
 }

@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 import time
 import pika
+import cv2
 
 ##############################################################
 
@@ -71,6 +72,35 @@ def generate_random_message():
 ##############################################################
 
 
+camera_index = '/dev/video2'
+path_to_images_dir = '/home/pino/fake-data/images/'
+
+
+def export_camera_frame(_timestamp):
+    """Export a camera frame with name is timestamp"""
+
+    cap = cv2.VideoCapture(camera_index)
+    if not cap.isOpened():
+        print(f"Error: Could not open camera {camera_index}")
+        return
+
+    # Read a single frame from the camera
+    ret, frame = cap.read()
+    if not ret:
+        print("Error: Could not read frame from the camera")
+        cap.release()
+        return
+
+    # Save the frame as a JPG image
+    output_image = path_to_images_dir + _timestamp + ".jpg"
+    cv2.imwrite(output_image, frame)
+
+    cap.release()
+    print(f"Frame exported as {output_image}")
+
+##############################################################
+
+
 # Define the AMQP server connection parameters, including login credentials
 credentials = pika.PlainCredentials('guest', 'guest')
 connection_parameters = pika.ConnectionParameters(
@@ -90,15 +120,23 @@ channel = connection.channel()
 queue_name = 'event'  # Modify with your queue name
 channel.queue_declare(queue=queue_name)
 
-for _ in range(10):
+##############################################################
+
+while (True):
     random_message, timestamp = generate_random_message()
+    message_string = json.dumps(random_message, indent=2)
+
     # Publish the message to the queue
     channel.basic_publish(
         exchange='',
         routing_key=queue_name,
-        body=random_message
+        body=message_string
+        # body = 'test message'
     )
-    print(f"Sent message: {random_message}")
+    print(f"Sent message: {message_string}")
+
+    export_camera_frame(timestamp)
+
     time.sleep(1)  # Delay between messages
 
 # Close the connection

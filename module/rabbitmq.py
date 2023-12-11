@@ -8,16 +8,17 @@ import cv2
 import os
 
 
-def singleBlobUpload(_bucket_name, _source_file_name):
+def singleBlobUpload(_bucket_name, _source_file_name, _destination_blob):
     """
     Uploads a file to the bucket:
     _bucket_name: The ID of your GCS bucket
     _source_file_name: The path to the file to upload
+    _destination_blon: The path to the file in GCS bucket
     """
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(_bucket_name)
-    destination_blob_name = os.path.basename(_source_file_name)
+    destination_blob_name = _destination_blob
     blob = bucket.blob(destination_blob_name)
 
     # Optional: set a generation-match precondition to avoid potential race conditions
@@ -35,5 +36,5 @@ def singleBlobUpload(_bucket_name, _source_file_name):
         print(f"Error when upload {_source_file_name} to bucket: {e}")
         return False
 
-    print(f"File {_source_file_name} uploaded to bucket.")
+    print(f"File {_source_file_name} uploaded to bucket: {destination_blob_name}")
     return True
