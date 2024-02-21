@@ -4,7 +4,7 @@ import sys
 import os
 import pika
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 
 
@@ -225,11 +225,25 @@ def getTimestampFromMessage(_message):
 
     data = json.loads(_message)
     timestamp_str = data.get('@timestamp')
-    
+
     # Pop the 'Z' in the original timestamp string
     new_ts_str = timestamp_str[:-1]
     return new_ts_str
-    # return timestamp_str
+
+
+def convertUTC0ToUTC7(timestamp):
+    """Convert ts str from UTC+0 to UTC+7"""
+
+    dt_utc0 = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    utc0 = timedelta(hours=0)
+    utc7 = timedelta(hours=7)
+    dt_utc7 = dt_utc0 + (utc7 - utc0)
+
+    timestamp_utc7 = dt_utc7.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    final_timestamp = timestamp_utc7[0:-4] + timestamp_utc7[-1]
+
+    return final_timestamp
 
 
 def getImageURL(_timestamp_str):
@@ -283,6 +297,9 @@ def sendImageAndVideo(_message):
     vid_up_res = False
 
     timestamp = getTimestampFromMessage(_message)
+    new_timestamp = convertUTC0ToUTC7(timestamp)
+    timestamp = new_timestamp
+
     if (timestamp != None):
         local_image_name = timestamp + 'Z' + IMAGE_EXTENTION
         local_video_name = timestamp + 'Z' + VIDEO_EXTENTION

@@ -1,35 +1,15 @@
-import os
+from datetime import datetime, timedelta
 
+def convertUTC0ToUTC7(timestamp):
+    """Convert ts str from UTC+0 to UTC+7"""
 
-def searchFileInDirectory(_directory, _file_name):
-    """
-    Search for a file in a directory.
+    dt_utc0 = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
 
-    Parameters:
-    - _directory: The directory to search in.
-    - _file_name: The name of the file to search for.
+    utc0 = timedelta(hours=0)
+    utc7 = timedelta(hours=7)
+    dt_utc7 = dt_utc0 + (utc7 - utc0)
 
-    Returns:
-    - True if the file is found, False otherwise.
-    """
-    # Get the list of files in the directory
-    try:
-        files_in_directory = os.listdir(_directory)
-    except Exception as e:
-        print(f"Some error: {e}")
-        return False
+    timestamp_utc7 = dt_utc7.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    final_timestamp = timestamp_utc7[0:-4] + timestamp_utc7[-1]
 
-    for obj in files_in_directory:
-        print(obj)
-
-    # Check if the file is in the list
-    if _file_name in files_in_directory:
-        return True
-    else:
-        return False
-
-
-if searchFileInDirectory("/home/pino/fake-data/images", "2023-12-09T08:53:25.144Z.jpg"):
-    print("True")
-else:
-    print("False")
+    return final_timestamp
