@@ -466,12 +466,14 @@ def messageProcessing():
 
     # Declare the queue to receive messages from
     local_queue_name = 'message'
-    local_channel.queue_declare(queue=local_queue_name)
+    local_channel.queue_declare(queue=local_queue_name, durable=True)
 
     # Define a callback function to process received messages
     def local_callback(ch, method, properties, body):
-        print(f"{cloudMessageGenerate(body)}\n")
-        sendMessage(cloudMessageGenerate(body))
+        image_upload_res, video_upload_res = sendImageAndVideo(body)
+        if image_upload_res:
+        # print(f"{cloudMessageGenerate(body)}\n")
+            sendMessage(cloudMessageGenerate(body))
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     # Set up the consumer and specify the callback function
