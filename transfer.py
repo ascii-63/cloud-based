@@ -20,6 +20,8 @@ VEHICLE_RENAME = 'Vehicle'
 # In the person object of model message, these field index is empty/not useable
 PERSON_MESSAGE_FIELD_REMOVE_LIST = [6, 10, 11]
 
+COLON_UNICODE = '%3A'
+
 ##################################
 
 remote_amqp_url = None
@@ -31,6 +33,10 @@ local_image_dir = None
 local_video_dir = None
 cloud_image_dir = None
 cloud_video_dir = None
+
+url_start = 'https://storage.googleapis.com/'
+image_url_start = None
+video_url_start = None
 
 ##################################
 
@@ -92,6 +98,7 @@ def envFileParser():
     global remote_amqp_url, remote_queue_name
     global bucket_name
     global local_image_dir, local_video_dir, cloud_image_dir, cloud_video_dir
+    global url_start, image_url_start, video_url_start
 
     with open(ENV_FILE_PATH) as f:
         for line in f:
@@ -110,6 +117,9 @@ def envFileParser():
     cloud_image_dir = os.environ.get('CLOUD_IMAGE_DIR')
     cloud_video_dir = os.environ.get('CLOUD_VIDEO_DIR')
 
+    image_url_start = url_start + bucket_name + '/' + cloud_image_dir + '/'
+    video_url_start = url_start + bucket_name + '/' + cloud_video_dir + '/'
+
     #############################
 
     if (
@@ -120,6 +130,8 @@ def envFileParser():
         or local_video_dir is None
         or cloud_image_dir is None
         or cloud_video_dir is None
+        or image_url_start is None
+        or video_url_start is None
     ):
         return False
     return True
@@ -213,14 +225,23 @@ def getTimestampFromMessage(_message):
 
     data = json.loads(_message)
     timestamp_str = data.get('@timestamp')
-    # Pop the 'Z' in the original timestamp string
-    new_ts_str = timestamp_str[:-1]
-    return new_ts_str
+    # # Pop the 'Z' in the original timestamp string
+    # new_ts_str = timestamp_str[:-1]
+    # return new_ts_str
+    return timestamp_str
 
 
 def getImageURL(_timestamp_str):
     """Get Image Public URL from Google Storage with a specific timestamp"""
-    return None
+
+    global image_url_start
+    image_url = image_url_start
+    
+    timestamp_str = str(_timestamp_str)
+    timestamp_str.replace(':', COLON_UNICODE)
+    image_url = image_url + timestamp_str + IMAGE_EXTENTION
+
+    return image_url
 
 
 def getVideoURL(_timestamp_str):
