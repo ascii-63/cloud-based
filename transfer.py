@@ -252,7 +252,7 @@ def getImageURL(_timestamp_str):
     global image_url_start
     image_url = image_url_start
     
-    timestamp_str = str(_timestamp_str)
+    timestamp_str = convertUTC0ToUTC7(_timestamp_str)
     timestamp_str.replace(':', COLON_UNICODE)
     image_url = image_url + timestamp_str + IMAGE_EXTENTION
 
