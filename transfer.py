@@ -225,10 +225,11 @@ def getTimestampFromMessage(_message):
 
     data = json.loads(_message)
     timestamp_str = data.get('@timestamp')
-    # # Pop the 'Z' in the original timestamp string
-    # new_ts_str = timestamp_str[:-1]
-    # return new_ts_str
-    return timestamp_str
+    
+    # Pop the 'Z' in the original timestamp string
+    new_ts_str = timestamp_str[:-1]
+    return new_ts_str
+    # return timestamp_str
 
 
 def getImageURL(_timestamp_str):
