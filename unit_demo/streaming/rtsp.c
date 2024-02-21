@@ -33,7 +33,7 @@ void getLauchCommand(const char *video_src)
         strcat(launch_cmd, " device=");
         strcat(launch_cmd, video_src);
         strcat(launch_cmd,
-               " ! videoconvert ! video/x-raw,width=640,height=480,format=I420 ! x264enc tune=zerolatency bitrate=500 speed-preset=ultrafast ! rtph264pay name=pay0 pt=96 )");
+               " ! videoconvert ! video/x-raw,width=640,height=480,format=I420 ! x264enc tune=zerolatency bitrate=500 speed-preset=ultrafast ! h264parse ! rtph264pay name=pay0 pt=96 )");
         //   " ! videoconvert ! video/x-raw,width=640,height=480 ! x264enc ! rtph264pay name=pay0 pt=96 )");
     }
 }
@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 
     //////////////////////////////////
 
+    gst_rtsp_server_set_address(server, "192.168.0.200");
     gst_rtsp_server_set_service(server, rtsp_server_port);
     printf("CHECKPOINT.\n");
 

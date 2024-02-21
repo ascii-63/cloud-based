@@ -75,7 +75,7 @@ connection = pika.BlockingConnection(connection_parameters)
 channel = connection.channel()
 
 # Declare the queue
-channel.queue_declare(queue=queue_name)
+channel.queue_declare(queue=queue_name, durable=True)
 
 
 # Define a callback function to process incoming messages

@@ -5,10 +5,10 @@ import pika
 def receive_message():
     # Define the local AMQP server connection parameters
     local_connection_parameters = pika.ConnectionParameters(
-        host='localhost',
+        host='192.168.0.201',
         port=5672,
         virtual_host='/',
-        credentials=pika.PlainCredentials('guest', 'guest')
+        credentials=pika.PlainCredentials('admin', 'admin')
     )
 
     # Create a connection to the local AMQP server
@@ -16,8 +16,8 @@ def receive_message():
     local_channel = local_connection.channel()
 
     # Declare the queue to receive messages from
-    local_queue_name = 'event'
-    local_channel.queue_declare(queue=local_queue_name)
+    local_queue_name = 'message'
+    local_channel.queue_declare(queue=local_queue_name, durable=True)
 
     # Define a callback function to process received messages
     def local_callback(ch, method, properties, body):
