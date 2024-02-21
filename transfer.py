@@ -241,7 +241,7 @@ def convertUTC0ToUTC7(timestamp):
     dt_utc7 = dt_utc0 + (utc7 - utc0)
 
     timestamp_utc7 = dt_utc7.strftime('%Y-%m-%dT%H:%M:%S.%f')
-    final_timestamp = timestamp_utc7[0:-4]
+    final_timestamp = timestamp_utc7[0:-3]
 
     return final_timestamp
 
